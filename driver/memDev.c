@@ -82,7 +82,8 @@ unsigned long long  g_ullTaskletTimes;
 
 int memDev_init(unsigned int size, unsigned char **ppBuf, MsgEvtProcessFunc process){
     int iRes, devno;
-    printk(KERN_DEBUG "[memMsgDev] enter. \n");
+    printk(KERN_DEBUG "memDev_init() enter. \n");
+    printk(KERN_DEBUG "memDev_init() KMALLOC_MAX_SIZE=%u\n", KMALLOC_MAX_SIZE);
 
     iRes = alloc_chrdev_region(&g_mem_dev,0,DEV_ID_COUNT,"memMsgDev");
     if (likely(0 == iRes)){
@@ -108,7 +109,7 @@ int memDev_init(unsigned int size, unsigned char **ppBuf, MsgEvtProcessFunc proc
     }
     if (NULL == mem_msg_buf){
         printk(KERN_DEBUG "[memMsgDev] need to init msg dev. \n");
-        g_size =size;
+        g_size = size;
         if (size % 4096 > 0){
             g_size += 4096 - size % 4096;
         }
@@ -194,6 +195,7 @@ static unsigned char * malloc_reserved_mem(unsigned int size){
         printk("Error : malloc_reserved_mem kmalloc failed!\n");
         return NULL;
     }
+    
     n = size / 4096 + 1;
     if (0 == size % 4096 ){
         --n;
@@ -202,16 +204,23 @@ static unsigned char * malloc_reserved_mem(unsigned int size){
         SetPageReserved(virt_to_page(tmp));
         tmp += 4096;
     }
+    
     return p;
 }
  
 int mem_mmap(struct file *filp, struct vm_area_struct *vma){
     printk("in mem_mmap\n");
     unsigned long offset = vma->vm_pgoff << PAGE_SHIFT; 
-    unsigned long  physics = ((unsigned long )mem_msg_buf)-PAGE_OFFSET;
-    unsigned long mypfn = physics >> PAGE_SHIFT;
-    unsigned long vmsize = vma->vm_end-vma->vm_start;
+    /*unsigned long  physics = ((unsigned long )mem_msg_buf)-PAGE_OFFSET; */
+    unsigned long physics =
+      (unsigned long)(virt_to_phys((unsigned long)mem_msg_buf));
+    unsigned long mypfn = physics >> PAGE_SHIFT + vma->vm_pgoff;
+    unsigned long vmsize = vma->vm_end - vma->vm_start;
     unsigned long psize = g_size - offset;
+    printk(KERN_DEBUG
+           "INFO:mem_mmap() The magicnum of mem_msg_buf for mmap is %s\n",
+           mem_msg_buf);        
+    printk(KERN_DEBUG "INFO: mem_mmap() vm_pgoff = %u, vmsize= %u\n", vma->vm_pgoff, vmsize);
     if(vmsize > psize){
         printk(KERN_DEBUG "Error : mem_mmap() vmsize[%d] > g_size[%d] ! \n", vmsize, g_size);
         return -ENXIO;

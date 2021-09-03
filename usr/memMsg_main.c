@@ -29,6 +29,7 @@ int testUnInstallCharDevDriver (void * pData){
     return 0;
 }
 
+
 int testReadBuf(void * pData){
     char *buf = getMemMsgBuf();
     if (NULL == buf){
@@ -42,7 +43,7 @@ int testReadBuf(void * pData){
 int testWriteBuf(void * pData){
     char *buf = getMemMsgBuf();
     if (NULL == buf){
-        printf("Error : testReadBuf() can't get the buf address. \n");
+        printf("Error : testWriteBuf() can't get the buf address. \n");
         return -1;
     }
     sprintf(buf, "hello buffer!\n");
@@ -57,21 +58,25 @@ int testCloseBuf(void * pData){
 
 int testInitMsgPool(void * pData){
     int res;
+    printf("enter testInitMsgPool(). \n");
     printf("testInitMsgPool : Enter  , and we will mmap a memory for size[%d]. \n", usrGetMsgPoolMemorySize());
     res = memMsgBufInit(usrGetMsgPoolMemorySize(), usrEvtProcess);
     if (0 > res){
         printf("Error : testInitMsgPool() fail to memMsgBufInit, the return value[%d]!\n", res);
         return res;
     }
+    printf("memMsgBufInit() finished succesfully \n");
     res = usrMsgPoolInit(getMemMsgBuf(), memMsgIoctl);                    
     if (0 > res){
         printf("Error : testInitMsgPool() fail to usrMsgPoolInit, the return value[%d]!\n", res);
         return res;
     }
+    printf("Leave testInitMsgPool().\n");
     return 0;
 }
 
 int testSendMsg(void * pData){
+    printf("Enter testSendPool().\n");
     char data[] = "hello this is a test.\n";
     usrSendMsg(data, sizeof(data));
     return 0;

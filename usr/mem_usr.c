@@ -1,4 +1,5 @@
 #include <sys/mman.h>
+#include <sys/select.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -68,7 +69,9 @@ int memMsgBufInit(unsigned int size ,Mem_Evt_Process process){
         printf("Error : getMemMsgBuf() fail mmap, errno[%d]!\n", errno);
         return -2;
     }
+    printf("mmap() successfully. MagicNum=%s \n", g_pBuffer);
     mem_evt_process = process;
+    
 
     res = pthread_create(&pth_t, NULL, select_thread, NULL);
     if (0 > res){

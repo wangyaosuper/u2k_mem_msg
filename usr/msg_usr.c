@@ -11,7 +11,10 @@ MsgIoctl msg_ioctl = NULL;
 int usrMsgPoolInit(unsigned char *msg_pool, MsgIoctl ioctlFunc){
     int res;
     msg_ioctl = ioctlFunc;
-    msgPoolInit(printf, malloc , free,  msg_pool);
+    printf("before msgPoolInit() successfully. MagicNum=%s \n", msg_pool);
+    char *p;
+    p = msgPoolInit(printf, malloc , free,  msg_pool);
+    printf("msgPoolInit() successfully. MagicNum=%s \n", p);
     return 0;
 }
 
@@ -22,6 +25,7 @@ int usrSendMsg(unsigned char *pData, unsigned int len){
         printf("Error: usrSendMsg() failed to memAddMsg, the return value[%d]", res);
         return res;
     }
+    printf("memAddMsg() finished successfully.\n");
     res = msg_ioctl(0 , NULL);
     if (0 < res){
         printf("Error: usrSendMsg() failed to ioctl, the return value[%d], errno[%d]", res, errno);

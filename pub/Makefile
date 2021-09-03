@@ -12,3 +12,4 @@ msg_pool_test.o: msg_pool_test.c
 clean:
 	-rm *.o 2>/dev/null
 	-rm msg_pool_test 2>/dev/null
+	-rm msg_pool.dwo 2>/dev/null

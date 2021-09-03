@@ -1,3 +1,4 @@
+
 #include "msg_pool.inc"
 #include "msg_pool.h"
 
@@ -13,13 +14,62 @@ MsgPoolFree   msgPoolFree  = NULL;
 struct MsgPool *msgPool;
 unsigned char *tmp_buffer;
 /* --------------------- static func for memcpy ------------------- */
+static char* itoa(int num,char* str,int radix)
+{
+	char index[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//索引表
+	unsigned unum;
+	int i=0,j,k;
+ 
+	
+	if(radix==10&&num<0)
+	{
+		unum=(unsigned)-num;
+		str[i++]='-';
+	}
+	else unum=(unsigned)num;
+ 
+	
+	do
+	{
+		str[i++]=index[unum%(unsigned)radix];
+		unum/=radix;
+ 
+	}while(unum);
+ 
+	str[i]='\0';
+ 
+	
+	if(str[0]=='-') k=1;
+	else k=0;
+ 
+	char temp;
+	for(j=k;j<=(i-1)/2;j++)
+	{
+		temp=str[j];
+		str[j]=str[i-1+k-j];
+		str[i-1+k-j]=temp;
+	}
+ 
+	return str;
+}
+
+
 static void mem_memcpy(void * a , void * b, unsigned int size){
     unsigned char *x = a;
     unsigned char *y = b;
     unsigned int i;
+    char str[10];
+    msgPoolPrint("enter mem_memcpy().\n");
     for (i = 0 ; i < size ; ++i){
         x[i] = y[i];
+        itoa(i, str, 10);
+        /*
+        msgPoolPrint("mem_memcpy() i=");
+        msgPoolPrint(str);
+        msgPoolPrint("\n");
+        */
     }
+    msgPoolPrint("leave mem_memcpy().\n");
 }
 
 static void mem_strcpy(char * a , char * b){
@@ -108,7 +158,9 @@ static int allocFreeCubs(struct MsgCub *heap, unsigned char *pData, unsigned int
         ++count;
     }
     for (i = 0 ; i < count; ++i){
+        msgPoolPrint("before allocAFreeCub() in allocFreeCubs(). \n");
         cub = allocAFreeCub(heap);
+        msgPoolPrint("after allocAFreeCub() in allocFreeCubs(). \n");
         if (-1 == cub){
             freeCubs(heap, head, NULL, 0);
             head = -1;
@@ -119,11 +171,19 @@ static int allocFreeCubs(struct MsgCub *heap, unsigned char *pData, unsigned int
         }
         if (-1 != lastCub){
             heap[lastCub].nextCub = cub;
+            msgPoolPrint("heap[lastCub].nextCub = cub.\n");
         }
         lastCub = cub;
         heap[cub].nextCub = -1;
-        mem_memcpy(heap[cub].data,  pData, MSG_CUB_DATA_LEN);
-        pData += MSG_CUB_DATA_LEN;
+        msgPoolPrint("before mem_memcpy in allocFreeCubs().\n");
+        if (i != count - 1){
+            mem_memcpy(heap[cub].data,  pData, MSG_CUB_DATA_LEN);
+            pData += MSG_CUB_DATA_LEN;
+        } else {
+            mem_memcpy(heap[cub].data,  pData, len % MSG_CUB_DATA_LEN);
+            pData += len % MSG_CUB_DATA_LEN;
+        }
+        msgPoolPrint("after mem_memcpy in allocFreeCubs().\n");
     }
     return head;
 }
@@ -150,20 +210,23 @@ unsigned char * msgPoolInit_Server(MsgPoolPrint pPrintFunc,
     struct MsgPool * msgPool = (struct MsgPool *) msgPoolInit(pPrintFunc, 
                                        pMallocFunc, pFreeFunc,
                                        pool);
-                
+    msgPoolPrint("msgPoolInit() finished successfully. \n");
     mem_strcpy(msgPool->magicNum, "This is a msg Pool between Kernel and usr mode.\n");
     msgPool->k2uPool.begin = -1;
     msgPool->k2uPool.end = -1;
     msgPool->u2kPool.begin = -1;
     msgPool->u2kPool.end = -1;
+    msgPoolPrint("msgPool u2kPool begin end init successfully. \n");
     mem_memset(msgPool->u2kPool.queue, 0x0, sizeof(msgPool->u2kPool.queue));
     mem_memset(msgPool->k2uPool.queue, 0x0, sizeof(msgPool->k2uPool.queue));
     mem_memset(msgPool->k2uPool.heap, 0x0, sizeof(msgPool->k2uPool.heap));
     mem_memset(msgPool->u2kPool.heap, 0x0, sizeof(msgPool->u2kPool.heap));
+    msgPoolPrint("msgPool u2kPool queue heep clean successfully. \n");
     for (i = 0 ; i < MAX_MSG_POOL_SIZE; ++i){
         msgPool->k2uPool.heap[i].nextCub = -1;
         msgPool->u2kPool.heap[i].nextCub = -1;
     }
+    msgPoolPrint("msgPool u2kPool queue heep init successfully. \n");
     return pool;
 }
 
@@ -178,6 +241,7 @@ unsigned char * msgPoolInit(MsgPoolPrint pPrintFunc,
     if (NULL == msgPool){
         return NULL;
     }
+    msgPoolPrint("Leave msgPoolInit(). \n");
     return pMsgPool;
 }
 
@@ -188,18 +252,23 @@ unsigned char * msgPoolInit(MsgPoolPrint pPrintFunc,
 
 int memAddMsg(unsigned char *pData, unsigned int len, EN_MSG_DIRECTION direct){
     int head;
+    msgPoolPrint("Enter memAddMsg().\n");
     struct DirectionMsgPool * pDMP = getDirectionMsgPool(direct);
+    msgPoolPrint("getDirectionMsgPool() successfully.\n");
     unsigned int next = pDMP->begin + 1;
     if (next >= MAX_MSG_QUEUE_LEN){
         next = 0;
     }
+    msgPoolPrint("pDMP->begin set successfully.\n");
     if (next == pDMP->end){
         return -1;
     }
+    msgPoolPrint("next != pDMP->end.\n");
     head = allocFreeCubs(pDMP->heap, pData, len);
     if (0 > head){
         return head - 10;
     }
+    msgPoolPrint("allocFreeCubs() successfully.\n");
     pDMP->queue[next].msgCubNum = head;
     pDMP->queue[next].datalen = len;
     pDMP->begin = next;
