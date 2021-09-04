@@ -8,12 +8,12 @@
 
 MsgIoctl msg_ioctl = NULL;
 
-int usrMsgPoolInit(unsigned char *msg_pool, MsgIoctl ioctlFunc){
+int usrMemStructInit(unsigned char *pMemStruct, MsgIoctl ioctlFunc){
     int res;
     msg_ioctl = ioctlFunc;
-    printf("before msgPoolInit() successfully. MagicNum=%s \n", msg_pool);
+    printf("before msgPoolInit() successfully. MagicNum=%s \n", pMemStruct);
     char *p;
-    p = msgPoolInit(printf, malloc , free,  msg_pool);
+    p = memStructInit(printf, malloc , free,  pMemStruct);
     printf("msgPoolInit() successfully. MagicNum=%s \n", p);
     return 0;
 }
@@ -35,8 +35,8 @@ int usrSendMsg(unsigned char *pData, unsigned int len){
 
 
 /*  ---------------- get msg pool memory size ---------*/
-unsigned int usrGetMsgPoolMemorySize(){
-    return memGetMsgPoolMemorySize();
+unsigned int usrGetMemStructSize(){
+    return memGetMemStructSize();
 }
 
 

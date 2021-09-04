@@ -7,7 +7,7 @@ int usrMsgPoolInit(unsigned char *msgPool, MsgIoctl msg_ioctl);
 
 int usrSendMsg(unsigned char *pData, unsigned int len);
 
-unsigned int usrGetMsgPoolMemorySize();
+unsigned int usrGetMemStructSize();
 
 int usrEvtProcess();
 

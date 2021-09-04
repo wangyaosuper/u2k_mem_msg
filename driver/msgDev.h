@@ -10,7 +10,7 @@ int msg_mem_mmap(struct file *filp, struct vm_area_struct *vma, unsigned char *m
 
 int msg_Evt_Process(void);
 
-unsigned int msg_get_msg_pool_memory_size(void);
+unsigned int msg_get_mem_struct_size(void);
 
 int msg_send_msg(unsigned char *pData, unsigned int len);
 

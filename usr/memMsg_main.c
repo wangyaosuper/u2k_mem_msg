@@ -59,14 +59,14 @@ int testCloseBuf(void * pData){
 int testInitMsgPool(void * pData){
     int res;
     printf("enter testInitMsgPool(). \n");
-    printf("testInitMsgPool : Enter  , and we will mmap a memory for size[%d]. \n", usrGetMsgPoolMemorySize());
-    res = memMsgBufInit(usrGetMsgPoolMemorySize(), usrEvtProcess);
+    printf("testInitMsgPool : Enter  , and we will mmap a memory for size[%d]. \n", usrGetMemStructSize());
+    res = memStructBufInit(usrGetMemStructSize(), usrEvtProcess);
     if (0 > res){
         printf("Error : testInitMsgPool() fail to memMsgBufInit, the return value[%d]!\n", res);
         return res;
     }
     printf("memMsgBufInit() finished succesfully \n");
-    res = usrMsgPoolInit(getMemMsgBuf(), memMsgIoctl);                    
+    res = usrMemStructInit(getMemMsgBuf(), memMsgIoctl);                    
     if (0 > res){
         printf("Error : testInitMsgPool() fail to usrMsgPoolInit, the return value[%d]!\n", res);
         return res;

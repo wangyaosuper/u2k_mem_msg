@@ -14,7 +14,7 @@ int  memMsgDev_init(void)
     printk(KERN_DEBUG "Page Size = %u", PAGE_SIZE);
     printk(KERN_INFO "[memMsgDev]memMsgDev init.\n");
     /* only mem need dev to be install as a module, msg is a logic function on the mem dev */
-    iRes = memDev_init(msg_get_msg_pool_memory_size() , &pBuff, msg_Evt_Process); 
+    iRes = memDev_init(msg_get_mem_struct_size() , &pBuff, msg_Evt_Process); 
     if (0 > iRes){
         printk(KERN_DEBUG "Error: memMsgDev_init() fail to memDev_init, return value[%d]. \n", iRes);
         return -1;

@@ -1,5 +1,6 @@
 
 #include "msg_pool.inc"
+#include "mem_struct.inc"
 #include "msg_pool.h"
 
 #ifndef NULL
@@ -10,7 +11,7 @@ MsgPoolPrint  msgPoolPrint = NULL;
 MsgPoolMalloc msgPoolMalloc = NULL;
 MsgPoolFree   msgPoolFree  = NULL;
 
-
+struct MemStruct *memStruct;
 struct MsgPool *msgPool;
 unsigned char *tmp_buffer;
 /* --------------------- static func for memcpy ------------------- */
@@ -203,14 +204,16 @@ static struct DirectionMsgPool * getDirectionMsgPool(EN_MSG_DIRECTION d){
 
 
 /* -------------------init func for msgPool -----------------------*/
-unsigned char * msgPoolInit_Server(MsgPoolPrint pPrintFunc, 
+unsigned char * memStructInit_Server(MsgPoolPrint pPrintFunc, 
                                    MsgPoolMalloc pMallocFunc, MsgPoolFree pFreeFunc, 
-                                   unsigned char *pool){
+                                   unsigned char *pMemStruct){
     unsigned int i;
-    struct MsgPool * msgPool = (struct MsgPool *) msgPoolInit(pPrintFunc, 
+    struct MemStruct * memStruct = (struct MemStruct *) memStructInit(pPrintFunc, 
                                        pMallocFunc, pFreeFunc,
-                                       pool);
+                                       pMemStruct);
+    struct MsgPool * msgPool = (struct MsgPool *)(getMsgPoolAddr(pMemStruct));
     msgPoolPrint("msgPoolInit() finished successfully. \n");
+    mem_strcpy(memStruct->magicNum, "This is a Share Memroy Struct\n");
     mem_strcpy(msgPool->magicNum, "This is a msg Pool between Kernel and usr mode.\n");
     msgPool->k2uPool.begin = -1;
     msgPool->k2uPool.end = -1;
@@ -227,22 +230,23 @@ unsigned char * msgPoolInit_Server(MsgPoolPrint pPrintFunc,
         msgPool->u2kPool.heap[i].nextCub = -1;
     }
     msgPoolPrint("msgPool u2kPool queue heep init successfully. \n");
-    return pool;
+    return pMemStruct;
 }
 
-unsigned char * msgPoolInit(MsgPoolPrint pPrintFunc, 
+unsigned char * memStructInit(MsgPoolPrint pPrintFunc, 
                             MsgPoolMalloc pMallocFunc, MsgPoolFree pFreeFunc, 
-                            unsigned char *pMsgPool){
+                            unsigned char *pMemStruct){
     msgPoolPrint = pPrintFunc;
     msgPoolMalloc = pMallocFunc;
     msgPoolFree = pFreeFunc;
-    msgPool = (struct MsgPool*)pMsgPool;
+    memStruct = (struct MemStruct*)pMemStruct;
+    msgPool = &(memStruct->msg_pool);
 
     if (NULL == msgPool){
         return NULL;
     }
     msgPoolPrint("Leave msgPoolInit(). \n");
-    return pMsgPool;
+    return pMemStruct;
 }
 
 
@@ -330,6 +334,19 @@ int memGetFreeCubNum(EN_MSG_DIRECTION d){
 }
 
 
-unsigned int memGetMsgPoolMemorySize(void){
-    return sizeof(struct MsgPool);
+unsigned int memGetMemStructSize(void){
+    return sizeof(struct MemStruct);
+}
+
+unsigned char * getMsgPoolAddr(unsigned char * pMemStruct){
+    return (unsigned char*)&(((struct MemStruct*)pMemStruct)->msg_pool);
+}
+
+void setJiffies64(unsigned long long jiffies64){
+    memStruct->jiffies64 = jiffies64;
+    return;
+}
+
+unsigned long long getJiffies64(void){
+    return memStruct->jiffies64;
 }

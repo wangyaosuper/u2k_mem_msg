@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "msg_pool.h"
-
+#include "mem_struct.h"
 
 
 /*  ---------- ops --------------- */
@@ -97,7 +97,7 @@ int testAddAndGet(){
     int res;
     EN_MSG_DIRECTION d;
     struct Operation *pGetOp;
-    pData = malloc(memGetMsgPoolMemorySize());
+    pData = malloc(memGetMemStructSize());
     msgPoolInit_Server(printf, malloc, free, pData);
     opQueueInit();
 

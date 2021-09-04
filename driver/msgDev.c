@@ -16,10 +16,10 @@ struct workqueue_struct *p_queue = NULL;
 EvtNotify msg_k2u_evt_notify;
 /* ----------------------------msg Dev init --------------------------- */
 
-unsigned char * msgDevInit(unsigned char *pMsgPool, EvtNotify evt_notify){
+unsigned char * msgDevInit(unsigned char *pMemStruct, EvtNotify evt_notify){
     unsigned char *res;
-    printk(KERN_DEBUG "msgDevInit : we will alloc a MsgPool with size of [%d] .\n", memGetMsgPoolMemorySize());
-    res = msgPoolInit_Server((MsgPoolPrint)printk, (MsgPoolMalloc)vmalloc, (MsgPoolFree)vfree, pMsgPool);
+    printk(KERN_DEBUG "msgDevInit : we will alloc a MsgPool with size of [%d] .\n", memGetMemStructSize());
+    res = memStructInit_Server((MsgPoolPrint)printk, (MsgPoolMalloc)vmalloc, (MsgPoolFree)vfree, pMemStruct);
     if (NULL == res){
         printk(KERN_DEBUG "Error: msgDevInit() msgPoolInit_Alloc failed!\n");
         return res;
@@ -100,6 +100,6 @@ int msg_send_msg(unsigned char *pData, unsigned int len){
 }
 
 /* ------------------------get memory size needed -------------------- */
-unsigned int msg_get_msg_pool_memory_size(){
-    return memGetMsgPoolMemorySize();
+unsigned int msg_get_mem_struct_size(){
+    return memGetMemStructSize();
 }

@@ -13,20 +13,23 @@ typedef enum MSG_DIRECTION{
 } EN_MSG_DIRECTION;
 
 
-unsigned char * msgPoolInit(MsgPoolPrint pPrintFunc, 
+unsigned char * memStructInit(MsgPoolPrint pPrintFunc, 
                             MsgPoolMalloc pMallocFunc, MsgPoolFree pFreeFunc,
-                            unsigned char *msgPool);
-unsigned char * msgPoolInit_Server(MsgPoolPrint pPrintFunc, 
+                            unsigned char *pMemStruct);
+unsigned char * memStructInit_Server(MsgPoolPrint pPrintFunc, 
                                   MsgPoolMalloc pMallocFunc, MsgPoolFree pFreeFunc,
-                                  unsigned char *msgPool);
+                                  unsigned char *pMemStruct);
 
 
 int memAddMsg(unsigned char *pData, unsigned int len, EN_MSG_DIRECTION direct);
 int memGetMsg(unsigned char **pData, EN_MSG_DIRECTION direct);
 unsigned int memGetQueueLen(EN_MSG_DIRECTION d);
 int memGetFreeCubNum(EN_MSG_DIRECTION d);
-unsigned int memGetMsgPoolMemorySize(void);
+unsigned int memGetMemStructSize(void);
+unsigned char * getMsgPoolAddr(unsigned char * pMemStruct);
 
+void setJiffies64(unsigned long long jiffies64);
+unsigned long long getJiffies64(void);
 
 #endif
 

@@ -3,7 +3,7 @@
 
 typedef int (*Mem_Evt_Process)();
 
-int memMsgBufInit(unsigned int size, Mem_Evt_Process process);
+int memStructBufInit(unsigned int size, Mem_Evt_Process process);
 int closeMemMsgBuf();
 
 void * getMemMsgBuf();

@@ -48,7 +48,7 @@ static void * getMemMsgBufPyhAddr(){
 }
 
 /* --------------------- init --------------------------------*/
-int memMsgBufInit(unsigned int size ,Mem_Evt_Process process){
+int memStructBufInit(unsigned int size ,Mem_Evt_Process process){
     static pthread_t pth_t;
     unsigned char * ret;
     int res;
