@@ -208,10 +208,10 @@ unsigned char * memStructInit_Server(MsgPoolPrint pPrintFunc,
                                    MsgPoolMalloc pMallocFunc, MsgPoolFree pFreeFunc, 
                                    unsigned char *pMemStruct){
     unsigned int i;
-    struct MemStruct * memStruct = (struct MemStruct *) memStructInit(pPrintFunc, 
+    memStruct = (struct MemStruct *) memStructInit(pPrintFunc, 
                                        pMallocFunc, pFreeFunc,
                                        pMemStruct);
-    struct MsgPool * msgPool = (struct MsgPool *)(getMsgPoolAddr(pMemStruct));
+    struct MsgPool * msgPool = (struct MsgPool *)(getMsgPoolAddr((unsigned char *)memStruct));
     msgPoolPrint("msgPoolInit() finished successfully. \n");
     mem_strcpy(memStruct->magicNum, "This is a Share Memroy Struct\n");
     mem_strcpy(msgPool->magicNum, "This is a msg Pool between Kernel and usr mode.\n");

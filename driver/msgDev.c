@@ -89,7 +89,7 @@ int msg_Evt_Process(){
 /* ---------------------- send msg ---------------------------------- */
 int msg_send_msg(unsigned char *pData, unsigned int len){
     int res;
-    printk(KERN_DEBUG "msg_send_msg() : Enter . \n");
+    printk(KERN_DEBUG "msg_send_msg() : Enter, jiffies64=%lld . \n", get_jiffies_64());
     res = memAddMsg(pData, len, E_K2U);
     if (0 > res){
         printk("Error : msg_send_msg() call memAddMsg failed , return value[%d]! \n", res);

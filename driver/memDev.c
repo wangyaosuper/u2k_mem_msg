@@ -52,7 +52,7 @@ struct file_operations Fops = {
     .poll = mem_poll,
 };
 
-/*------------huawei--------------------*/
+/*------------ Kernel Hook --------------------*/
 typedef void (* SoftIrqHook )(char cInOut, struct softirq_action* pCur, struct softirq_action* pVec);
 /*extern*/ SoftIrqHook gFunc_softIrqHook;
 typedef void (*TaskletHook )(char cInOut, struct tasklet_struct *pList);
@@ -143,7 +143,7 @@ int memDev_exit(){
     printk(KERN_DEBUG "[memMsgDev] unregister_chrdev_region successful.\n");
     printk("memDev exit successfully.\n");
 
-/*------------huawei--------------------*/
+/*------------hook--------------------*/
     gFunc_TaskletHook = NULL;
     gFunc_softIrqHook = NULL;
 /*--------------------------------*/

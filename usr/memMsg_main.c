@@ -2,6 +2,7 @@
 #include "forkscript.h"
 #include "mem_usr.h"
 #include "msg_usr.h"
+#include "../pub/msg_pool.h"
 
 #define MAX_BUF_SIZE 100
 
@@ -78,7 +79,9 @@ int testInitMsgPool(void * pData){
 int testSendMsg(void * pData){
     printf("Enter testSendPool().\n");
     char data[] = "hello this is a test.\n";
+    printf("Enter testSendPool(). Jiffies64=%lld . \n", getJiffies64());
     usrSendMsg(data, sizeof(data));
+    printf("Exit testSendPool(). Jiffies64=%lld . \n", getJiffies64());
     return 0;
 }
 
