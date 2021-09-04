@@ -1,0 +1,22 @@
+* 背景
+来源于liunxdemo中的memKernelShareToUser用例
+但是发现在QEMU-ARM交叉编译环境下运行存在问题
+
+* 调试 & 解Bug
+1. 编译错误，warning判定为error，排除所有的warning
+2. 链接错误: 动态库多余依赖
+             编译exec
+3. 动态库软链接设置
+4. 共享内存操作时Page Fault
+   内核mmap,计算物理地址是，转换存在问题，只偏移了offset，没有偏移物理基址
+   应该统一使用内核函数virt_to_phy()来做虚拟地址至物理地址的转换。
+
+5. 用户发消息给内核时，共享内存memcpy时Page Fault
+   内核在copy用户态内存时，按照cub的大小1024来整体copy，但是用户态内存空间没有那么大，导致读越界。
+   内核copy用户态内存时，需要按照用户态传给内核态的数据的Len来进行copy。
+
+* 使用说明
+1. make all就可以了，
+2. driver会产生一个ko，这个内核驱动支持设备文件的支持，内核buffer的开辟，msg_pool的创建, 共享内存区mmap的支持，read，write，ioctl的支持。 通过ioctl和共享内存区实现消息的发送。
+3. usr态是一个动态库，和ko配合，可以通过mmap实现和内核共享数据区，可以实现通过msg_pool接口和内核之间进行消息通信。
+4. test是一个demo。
