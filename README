@@ -18,5 +18,10 @@
 * 使用说明
 1. make all就可以了，
 2. driver会产生一个ko，这个内核驱动支持设备文件的支持，内核buffer的开辟，msg_pool的创建, 共享内存区mmap的支持，read，write，ioctl的支持。 通过ioctl和共享内存区实现消息的发送。
+KO 加载：
+insmod memMsgDev.ko
+mknod /dev/memMsgDev c 250 0
+
 3. usr态是一个动态库，和ko配合，可以通过mmap实现和内核共享数据区，可以实现通过msg_pool接口和内核之间进行消息通信。
+
 4. test是一个demo。

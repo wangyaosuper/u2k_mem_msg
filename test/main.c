@@ -1,15 +1,14 @@
 #include <stdio.h>
 
-int testInitMsgPool(void * pData);
+int testInitMemStruct(void * pData);
 int testSendMsg(void * pData);
 
 
 int main()
 {
     int ret;
-    char* p;
-    p = testInitMsgPool(NULL);
-    if (NULL != p){
+    ret = testInitMemStruct(NULL);
+    if (0 != ret){
         printf("testInitMsgPool failed, ret value = %d \n", ret);
         return ret;
     }

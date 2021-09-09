@@ -57,7 +57,7 @@ int testCloseBuf(void * pData){
     return 0;
 }
 
-int testInitMsgPool(void * pData){
+int testInitMemStruct(void * pData){
     int res;
     printf("enter testInitMsgPool(). \n");
     printf("testInitMsgPool : Enter  , and we will mmap a memory for size[%d]. \n", usrGetMemStructSize());
