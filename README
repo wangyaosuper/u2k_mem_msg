@@ -1,5 +1,5 @@
 * 背景
-来源于liunxdemo中的memKernelShareToUser用例
+来源于liunxdemo中的memKernelShareToUser用例，独立出来成为一个软件包
 但是发现在QEMU-ARM交叉编译环境下运行存在问题
 
 * 调试 & 解Bug
